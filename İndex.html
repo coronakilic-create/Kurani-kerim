@@ -1,1 +1,119 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kuran'ı Kerim</title>
+  <style>
+    body {
+      background: linear-gradient(white, #fff9e6);
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #fff9e6;
+      padding: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+    }
+    .band {
+      display: flex;
+      overflow-x: auto;
+      background: #fdfdfd;
+      border-bottom: 1px solid #ddd;
+      padding: 10px;
+    }
+    .band button {
+      margin: 5px;
+      padding: 10px 15px;
+      border: none;
+      background: #eee;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .band button:hover {
+      background: #d4af37;
+      color: white;
+    }
+    .content {
+      padding: 20px;
+      font-size: 18px;
+    }
+    .highlight {
+      background-color: #00f;
+      color: white;
+      padding: 5px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <header>Kuran'ı Kerim</header>
 
+  <!-- Bantlar -->
+  <div class="band" id="cuzler"></div>
+  <div class="band" id="sayfalar"></div>
+  <div class="band" id="sureler"></div>
+  <div class="band" id="ayetler"></div>
+
+  <!-- İçerik -->
+  <div class="content" id="icerik">Bir seçim yapınız...</div>
+
+  <script>
+    let quranData = null;
+
+    async function loadQuran() {
+      const response = await fetch("quran.json"); // aynı klasörde olmalı
+      quranData = await response.json();
+      buildUI();
+    }
+
+    function buildUI() {
+      // Cüzler
+      for (let i = 1; i <= 30; i++) {
+        let btn = document.createElement("button");
+        btn.innerText = "Cüz " + i;
+        btn.onclick = () => document.getElementById("icerik").innerText = "Cüz " + i + " seçildi.";
+        document.getElementById("cuzler").appendChild(btn);
+      }
+
+      // Sayfalar
+      for (let i = 1; i <= 604; i++) {
+        let btn = document.createElement("button");
+        btn.innerText = i;
+        btn.onclick = () => document.getElementById("icerik").innerText = "Sayfa " + i + " seçildi.";
+        document.getElementById("sayfalar").appendChild(btn);
+      }
+
+      // Sureler
+      quranData.surahs.forEach((sure, index) => {
+        let btn = document.createElement("button");
+        btn.innerText = sure.n + ". " + sure.nm;
+        btn.onclick = () => {
+          document.getElementById("icerik").innerText = sure.nm + " suresi seçildi.";
+          buildAyetler(index);
+        };
+        document.getElementById("sureler").appendChild(btn);
+      });
+    }
+
+    function buildAyetler(sureIndex) {
+      let ayetlerDiv = document.getElementById("ayetler");
+      ayetlerDiv.innerHTML = "";
+      let sure = quranData.surahs[sureIndex];
+      sure.a.forEach((ayet) => {
+        let ayetBtn = document.createElement("button");
+        ayetBtn.innerText = "Ayet " + ayet.n;
+        ayetBtn.onclick = () => {
+          document.getElementById("icerik").innerHTML =
+            "Seçilen Ayet: <span class='highlight'>" + ayet.t + "</span>";
+        };
+        ayetlerDiv.appendChild(ayetBtn);
+      });
+    }
+
+    loadQuran();
+  </script>
+</body>
+</html>
