@@ -4,67 +4,130 @@
   <meta charset="UTF-8" />
   <title>Kuran'ı Kerim</title>
   <style>
+    :root {
+      --bg: #fffef8;
+      --accent: #fdf6d9;
+      --text: #333;
+      --primary: #0066cc;
+      --highlight: #0047ff;
+    }
+
+    * { box-sizing: border-box; }
     body {
-      background: linear-gradient(white, #fff9e6);
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
     }
+
     header {
-      background-color: #fff9e6;
-      padding: 15px;
-      font-size: 24px;
+      background: var(--accent);
+      padding: 20px;
+      font-size: 28px;
       font-weight: bold;
-      color: #333;
+      text-align: left;
+      border-bottom: 2px solid #ddd;
     }
+
+    .bands {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+      padding: 20px;
+    }
+
     .band {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+
+    .band-header {
+      background: var(--accent);
+      padding: 10px 15px;
+      font-weight: 600;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .band-scroll {
       display: flex;
       overflow-x: auto;
-      background: #fdfdfd;
-      border-bottom: 1px solid #ddd;
       padding: 10px;
+      gap: 8px;
     }
-    .band button {
-      margin: 5px;
-      padding: 10px 15px;
-      border: none;
-      background: #eee;
+
+    .chip {
+      flex: 0 0 auto;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: #f1f1f1;
       cursor: pointer;
-      border-radius: 5px;
+      transition: 0.2s;
+      border: 1px solid #ddd;
     }
-    .band button:hover {
-      background: #d4af37;
+    .chip:hover {
+      background: var(--primary);
       color: white;
     }
+
     .content {
+      margin: 20px;
       padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
       font-size: 18px;
     }
+
     .highlight {
-      background-color: #00f;
+      background: var(--highlight);
       color: white;
-      padding: 5px;
-      border-radius: 3px;
+      padding: 5px 8px;
+      border-radius: 4px;
+    }
+
+    @media (min-width: 900px) {
+      .bands {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (min-width: 1200px) {
+      .bands {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+      }
     }
   </style>
 </head>
 <body>
   <header>Kuran'ı Kerim</header>
 
-  <!-- Bantlar -->
-  <div class="band" id="cuzler"></div>
-  <div class="band" id="sayfalar"></div>
-  <div class="band" id="sureler"></div>
-  <div class="band" id="ayetler"></div>
+  <div class="bands">
+    <div class="band">
+      <div class="band-header">Cüzler</div>
+      <div class="band-scroll" id="cuzler"></div>
+    </div>
+    <div class="band">
+      <div class="band-header">Sayfalar</div>
+      <div class="band-scroll" id="sayfalar"></div>
+    </div>
+    <div class="band">
+      <div class="band-header">Sureler</div>
+      <div class="band-scroll" id="sureler"></div>
+    </div>
+    <div class="band">
+      <div class="band-header">Ayetler</div>
+      <div class="band-scroll" id="ayetler"></div>
+    </div>
+  </div>
 
-  <!-- İçerik -->
   <div class="content" id="icerik">Bir seçim yapınız...</div>
 
   <script>
     let quranData = null;
 
     async function loadQuran() {
-      const response = await fetch("quran.json"); // aynı klasörde olmalı
+      const response = await fetch("quran.json"); // optimize edilmiş JSON dosyan
       quranData = await response.json();
       buildUI();
     }
@@ -72,7 +135,8 @@
     function buildUI() {
       // Cüzler
       for (let i = 1; i <= 30; i++) {
-        let btn = document.createElement("button");
+        let btn = document.createElement("div");
+        btn.className = "chip";
         btn.innerText = "Cüz " + i;
         btn.onclick = () => document.getElementById("icerik").innerText = "Cüz " + i + " seçildi.";
         document.getElementById("cuzler").appendChild(btn);
@@ -80,7 +144,8 @@
 
       // Sayfalar
       for (let i = 1; i <= 604; i++) {
-        let btn = document.createElement("button");
+        let btn = document.createElement("div");
+        btn.className = "chip";
         btn.innerText = i;
         btn.onclick = () => document.getElementById("icerik").innerText = "Sayfa " + i + " seçildi.";
         document.getElementById("sayfalar").appendChild(btn);
@@ -88,7 +153,8 @@
 
       // Sureler
       quranData.surahs.forEach((sure, index) => {
-        let btn = document.createElement("button");
+        let btn = document.createElement("div");
+        btn.className = "chip";
         btn.innerText = sure.n + ". " + sure.nm;
         btn.onclick = () => {
           document.getElementById("icerik").innerText = sure.nm + " suresi seçildi.";
@@ -103,7 +169,8 @@
       ayetlerDiv.innerHTML = "";
       let sure = quranData.surahs[sureIndex];
       sure.a.forEach((ayet) => {
-        let ayetBtn = document.createElement("button");
+        let ayetBtn = document.createElement("div");
+        ayetBtn.className = "chip";
         ayetBtn.innerText = "Ayet " + ayet.n;
         ayetBtn.onclick = () => {
           document.getElementById("icerik").innerHTML =
